@@ -1,52 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components"
+import { useNavigate,Link } from "react-router-dom";
 import { auth } from "../../firebase";
 import { FirebaseError } from "firebase/app";
+import { Error, Form, Input, Switcher, Title, Wrapper } from "../auth-components";
 import { signInWithEmailAndPassword } from "firebase/auth";
-
-
-const Wrapper = styled.div`
-   height : 100%;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   width:  420px;
-   padding: 58px 0px;
-`;
-
-const Title = styled.h1`
-    font-size: 42px;
-`;
-
-const Form = styled.form`
-    margin-top: 50px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-`;
-
-const Input = styled.input`
-    padding: 10px;
-    border-radius: 50px;
-    border: none;
-    width: 100%;
-    font-size: 16px;
-    &[type="submit"]{
-        cursor: pointer;
-        &:hover{
-            opacity: 0.8;
-        }
-    }
-
-`;
-
-const Error = styled.span`
-    font-weight: 600;
-    color: tomato;
-`
 
 
 export default function CreateAccount() {
@@ -70,11 +27,12 @@ export default function CreateAccount() {
         if(isLoading || email === "" || password ==="" ) return; // 비어있으면 함수 종료
         try{
             setLoading(true) // 위의 경우가 아니라면 여기로.
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth,email,password);
             navigate("/")
         }catch(e){
            if(e instanceof FirebaseError){ 
-            setError(e.message)
+            setError(e.message);
+    
            }
         }
         finally{
@@ -85,7 +43,7 @@ export default function CreateAccount() {
     <Wrapper>
         <Title>Log into X</Title>
         <Form onSubmit={onSubmit}>
-            <Input 
+            <Input
             onChange={onChange}
             name = "email" 
             value={email} 
@@ -104,6 +62,10 @@ export default function CreateAccount() {
             <Input type="submit" value={isLoading ? "Loading..." : "Login"} />
         </Form>
         {error !== "" ? <Error>{error}</Error> : null}
+        <Switcher>
+            Don't have an account?{" "}
+            <Link to="/create-account">Create one &rarr</Link>
+        </Switcher>
     </Wrapper>
     )
 }
